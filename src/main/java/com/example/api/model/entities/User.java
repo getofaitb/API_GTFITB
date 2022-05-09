@@ -1,16 +1,56 @@
 package com.example.api.model.entities;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
 @Entity
-public class User {
+@Data
+@RequiredArgsConstructor
+public class User implements UserDetails {
     @Id
-    private String idUser;
+    @GeneratedValue
+    private Long id;
+    @Column(unique = true)
+    private String username;
     private String password;
-    private Integer age;
-    private String favorite;
+    private String avatar;
+    private String rol = "USER";
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<SimpleGrantedAuthority> roles = new HashSet<>();
+        roles.add(new SimpleGrantedAuthority("ROLE_USER"));
+        return roles;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
